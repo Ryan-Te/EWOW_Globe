@@ -170,7 +170,7 @@ void draw(){
   int layer = 0;
   for (float lt = -57; lt <= 77.5; lt += 0.75){
     float numBooks = (floor(450 * cos(radians(lt))));
-    for (int b = 0; b < numBooks; b++){ //(float ln = -180; ln < 180; ln += increaseFactor){
+    for (int b = 0; b < numBooks; b++){
       float ln = (360f / numBooks) * b;
       
       if(abs(lt - (rotY - 2)) < (0.75 / 2) & abs(ln - ((rotX + 100) % 360)) < (180f / numBooks)) {
@@ -194,7 +194,9 @@ void draw(){
         if ((rotX + 100) % 360 > 270 && lnTc < 180){
           lnTc = lnTc + 360;
         }
-        if (abs(lt - rotY) < (renderThreshold - (scroll - 3.4)) && abs(lnTc - ((rotX + 100) % 360)) < (renderThreshold - (scroll - 3.4)) / cos(radians(lt)) && scroll >= 3.4){
+        float rotYTT = rotY;
+        if (rotYTT == 90) {rotYTT = 89.99;}
+        if (abs(lt - rotY) < (renderThreshold - (scroll - 3.4)) && abs(lnTc - ((rotX + 100) % 360)) < (renderThreshold - (scroll - 3.4)) / cos(radians(rotYTT)) && scroll >= 3.4){
           int btd = bookArray[layer][b];
           if (btd > 0 && btd <= 1296){
             int lb = floor((btd - 1) / 36);
@@ -281,17 +283,21 @@ void draw(){
     rect(startSMX, startSMY + 50, 400, 50);
     fill(0, 0, 0);
     text(search, startSMX, startSMY + 90);
-    for (int i = 0; i < 10; i ++){
-      int ID = searchList[i];
-      String name = names[ID];
-      for (int j = 0; j < 16; j++){
-        if(special[j] - 1 == ID) {
-          fill(249, 255, 145);
-          rect(startSMX, startSMY + (i * 50) + 100, 400, 50);
-          fill(0, 0, 0);
+    if (!search.equals("")){
+      for (int i = 0; i < 10; i ++){
+        int ID = searchList[i];
+        if (ID < 16607){
+          String name = names[ID];
+          for (int j = 0; j < 16; j++){
+            if(special[j] - 1 == ID) {
+              fill(249, 255, 145);
+              rect(startSMX, startSMY + (i * 50) + 100, 400, 50);
+              fill(0, 0, 0);
+            }
+          }
+          text(name, startSMX, startSMY + (i * 50) + 140);
         }
       }
-      text(name, startSMX, startSMY + (i * 50) + 140);
     }
   }
   
@@ -383,7 +389,7 @@ void keyPressed(){
         }
       }
       while (currentIndex < 10){
-        searchList[currentIndex] = 16605;
+        searchList[currentIndex] = 16607;
         currentIndex ++;
       }
     }
@@ -522,10 +528,10 @@ void keyPressed(){
     }
     saveStrings("bookIDs.txt", bookIDs);
     
-    print("Books Saved");
+    println("Books Saved");
   }
   if (keyCode == 106){
-    editMode = !editMode;
+    //editMode = !editMode;
   }
   //println(keyCode);
 }
@@ -570,7 +576,7 @@ void mousePressed(){
     if (mouseX >= startSMX + 250 && mouseX < startSMX + 400 && mouseY >= startSMY && mouseY < startSMY + 50){
       searchMode = false;
     }
-    if (mouseX >= startSMX && mouseX < startSMX + 400 && mouseY >= startSMY + 100 && mouseY < startSMY + 600){
+    if (mouseX >= startSMX && mouseX < startSMX + 400 && mouseY >= startSMY + 100 && mouseY < startSMY + 600 && !search.equals("")){
       int idToGoTo = searchList[floor(((mouseY - startSMY) - 100) / 50)] + 1;
       //println(names[idToGoTo - 1]);
       for (int y = 0; y < 180; y++){
